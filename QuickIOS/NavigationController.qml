@@ -1,18 +1,17 @@
 /*
- NavigationView provides views management like UINavigationController in iOS
+ NavigationController provides views management like UINavigationController in iOS
 
- Author: Ben Lau (benlau)
+  Author: Ben Lau (benlau)
+  License: Apache License
+  Project: https://github.com/hilarycheng/quickios
 
  */
 
 import QtQuick 2.2
 import "./priv"
 
-Item {
+ViewController {
     id : navigationView
-
-    // The tint color to apply to the navigation bar background. It is equivalent to color. It apply the naming convenient of UIKit
-    property string tintColor : "#007aff"
 
     property alias navigationBar : navBar
 
@@ -22,11 +21,14 @@ Item {
 
        Moreover, don't change the value after created or your have pushed any view already.
      */
-    property alias initialView : stack.initialView
+    property alias initialViewController : stack.initialViewController
 
     property alias views : stack.views
 
+    // Create ViewController from source file or Component then push it into the stack.
     function push(source,options) {
+        // Just like the present() and presentViewController() in ViewController. QuickIOS offer a solution
+        // that will create the component for you. Those functions will not has suffix of "viewController"
         stack.push(source,options);
     }
 
@@ -47,11 +49,12 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
+        tintColor : navigationView.tintColor
 
         onPushed: {
             // Attach navigationView to a newly created view
-            if (view.hasOwnProperty("navigationView"))
-                view.navigationView = navigationView;
+            if (view.hasOwnProperty("navigationController"))
+                view.navigationController = navigationView;
         }
     }
 

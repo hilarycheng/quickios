@@ -38,6 +38,7 @@ Rectangle {
   NavigationItem {
     id : dummyNavigationItem
   }
+
   StackView {
       id : stack
       anchors.fill: parent
@@ -62,13 +63,15 @@ Rectangle {
       id: viewsListener
       model : navigationBar.views
       delegate: Item {
+          id: item
 
           property var navigationItem : NavigationItem {}
+          property string title;
 
           Component {
               id: creator
               NavigationBarItem {
-                  title: navigationItem.title
+                  title: item.title
                   backStage: index > 0
                   leftBarButtonItems: navigationItem.leftBarButtonItems
                   rightBarButtonItems: navigationItem.rightBarButtonItems
@@ -82,30 +85,29 @@ Rectangle {
               item.anchors.centerIn = parent;
           }
 
+          function setTintColor(model) {
+              for (var i = 0 ; i < model.children.length; i++) {
+                  var child = model.children[i];
+                  if (child.hasOwnProperty("tintColor")) {
+                      child.tintColor = navigationBar.tintColor;
+                  }
+              }
+          }
+
           Component.onCompleted: {
               if (model.object.hasOwnProperty("navigationItem"))
                   navigationItem = model.object.navigationItem;
 
+              if (model.object.hasOwnProperty("title"))
+                  title = model.object.title;
               navigationItems.append({ object: navigationItem});
               navigationBar.navigationItem = navigationItem;
 
               var object = creator.createObject(stack);
 
-              if (navigationItem.leftBarButtonItem) {
-                   navigationItem.leftBar = navigationItem.leftBarButtonItem;
-              }
+              setTintColor(navigationItem.rightBarButtonItems);
 
-              if (navigationItem.rightBarButtonItem) {
-                   navigationItem.rightBar = navigationItem.rightBarButtonItem;
-              }
-
-              if (navigationItem.rightBar) {
-                  place(object.rightBar,navigationItem.rightBar);
-              }
-
-              if (navigationItem.leftBar) {
-                  place(object.leftBar,navigationItem.leftBar);
-              }
+              setTintColor(navigationItem.leftBarButtonItems);
 
               stack.push(object);
           }

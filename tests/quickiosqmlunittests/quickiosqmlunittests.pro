@@ -21,7 +21,11 @@ DEFINES += SRCDIR=\\\"$$PWD/\\\"
 include(../../quickios.pri)
 
 OTHER_FILES += \
-    tst_NavigationView.qml \
     tst_SegmentedControlTabView.qml \
     tst_SegmentedControl.qml \
-    tst_OverlayView.qml
+    Ruler.qml
+
+DISTFILES += \
+    tst_ViewController_presentViewController.qml \
+    tst_NavigationController.qml \
+    SampleView.qml

@@ -16,7 +16,7 @@
         <file>appdelegate.js</file>
         <file>images/back.png</file>
         <file>images/back@2x.png</file>
-        <file>NavigationView.qml</file>
+        <file>NavigationController.qml</file>
         <file>priv/NavigationViewTransition.qml</file>
         <file>priv/NavigationBarItem.qml</file>
         <file>NavigationItem.qml</file>
@@ -26,7 +26,8 @@
         <file>priv/SegmentedControlTabViewStyle.qml</file>
         <file>priv/qmldir</file>
         <file>SegmentedControl.qml</file>
-        <file>OverlayView.qml</file>
         <file>priv/NavigationStack.qml</file>
+        <file>priv/ViewControllerTransition.qml</file>
+        <file>transitions/CoverVerticalTransition.qml</file>
     </qresource>
 </RCC>

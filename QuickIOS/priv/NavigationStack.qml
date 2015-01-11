@@ -1,38 +1,36 @@
 /**
-    NavigationStack is a part of NavgiationView
+    NavigationStack provides a stackbased navigation model used within NavigationView
+
     Author: Ben Lau (benlau)
+    License: Apache License
+    Project: https://github.com/hilarycheng/quickios
  */
 
 import QtQuick 2.0
 import QtQuick.Controls 1.2
+import "../util.js" as Util
 
 Item {
     id: navigationView
 
     property ListModel views : ListModel {}
-    property alias initialView : stack.initialItem
+    property var initialViewController
+
+    property var tintColor
 
     signal pushed(var view)
 
-    function push(source,options) {
-        var view;
-        if (typeof source === "string") {
-            var comp = Qt.createComponent(source);
-            if (comp.status === Component.Error) {
-                console.warn("Error loading QML source: ",source);
-                console.warn(comp.errorString());
-                return;
-            }
-            view = comp.createObject(navigationView,options || {});
-        } else {            
-            // It is a component object
-            view = source.createObject(navigationView,options || {});
-            if (view === null) {
-                console.warn(source.errorString());
-                return;
-            }
+    function push(source,options) {        
+        var container = containerFactory.createObject(navigationView);
+        var view = Util.createObject(source,container,options);
+        if (view === undefined) {
+            container.destroy();
+            return;
         }
-        stack.push(view);
+
+        view.anchors.fill = container;
+
+        stack.push(container);
         views.append({object: view});
         pushed(view);
     }
@@ -53,10 +51,45 @@ Item {
         delegate: NavigationViewTransition {}
     }
 
-    onInitialViewChanged: {
-        if (initialView) {
-            views.append({ object: initialView })
-            pushed(initialView);
+    Component { // Create the container for the pushed ViewController
+        id: containerFactory
+
+        Item {
+            property var tintColor : navigationView.tintColor;
+
+            Stack.onStatusChanged:  {
+                var child = children[0];
+                switch (Stack.status) {
+                case Stack.Inactive :
+                    if (child.hasOwnProperty("viewDidDisappear"))
+                        child.viewDidDisappear(true);
+                    break;
+                case Stack.Activating :
+                    if (child.hasOwnProperty("viewWillAppear"))
+                        child.viewWillAppear(true);
+                    break;
+                case Stack.Active :
+                    if (child.hasOwnProperty("viewDidAppear"))
+                        child.viewDidAppear(true);
+                    break;
+                case Stack.Deactivating :
+                    if (child.hasOwnProperty("viewWillDisappear"))
+                        child.viewDidDisappear(true);
+                    break;
+                }
+            }
+
+        }
+    }
+
+    onInitialViewControllerChanged: {
+        if (initialViewController) {
+            var container = containerFactory.createObject(navigationView);
+            initialViewController.parent = container;
+            initialViewController.anchors.fill = container;
+            stack.initialItem = container;
+            views.append({ object: initialViewController })
+            pushed(initialViewController);
         }
     }
 

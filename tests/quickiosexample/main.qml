@@ -10,17 +10,16 @@ Window {
 
     Component {
         id: rootView
-        Item {
-            property var navigationItem : NavigationItem {
-                title : "Quick iOS Example Program"
-            }
+        ViewController {
+            title : "Quick iOS Example Program"
 
-            property string title : "Title"
+            navigationItem : NavigationItem {
+            }
 
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    rootView.navigation.push(Qt.resolvedUrl("alertview/AlertViewDemo.qml"));
+                    navigationController.push(Qt.resolvedUrl("alertview/AlertViewDemo.qml"));
                 }
             }
 
@@ -31,7 +30,7 @@ Window {
         }
     }
 
-    NavigationView {
+    NavigationController {
         id : navigation
         navigationBar.titleAttributes: NavigationBarTitleAttributes {
             textColor : "#ff0000"
